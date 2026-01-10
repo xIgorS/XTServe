@@ -36,12 +36,10 @@ public class DbStatsController : ControllerBase
             {
                 await connection.OpenAsync();
 
-                var query = @"SELECT [DatabaseName], [LogicalFileName], [FileGroup], [PhysicalFileName], 
-                             [FileType], [AllocatedSpaceMB], [UsedSpaceMB], [FreeSpaceMB], [UsedPercent] 
-                             FROM [Log].[dbo].[dbstats]";
-
-                using (var command = new SqlCommand(query, connection))
+                using (var command = new SqlCommand("dbo.GetDBStats", connection))
                 {
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    
                     using (var reader = await command.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
