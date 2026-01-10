@@ -13,7 +13,7 @@ builder.Services.AddAuthorization(options =>
         policy.RequireAssertion(context =>
         {
             var userName = context.User.Identity?.Name?.ToLowerInvariant();
-            return userName == "iswin\\igorsedykh" || userName == "iswin\\igorsedykh1";
+            return userName != null && (userName == "iswin\\igorsedykh" || userName == "iswin\\igorsedykh1");
         }));
 });
 
