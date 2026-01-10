@@ -7,7 +7,15 @@ builder.Services.AddControllers();
 builder.Services.AddAuthentication(Microsoft.AspNetCore.Authentication.Negotiate.NegotiateDefaults.AuthenticationScheme)
     .AddNegotiate();
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AuthorizedUsersOnly", policy =>
+        policy.RequireAssertion(context =>
+        {
+            var userName = context.User.Identity?.Name?.ToLowerInvariant();
+            return userName == "iswin\\igorsedykh" || userName == "iswin\\igorsedykh1";
+        }));
+});
 
 // Configure CORS policy for all origins
 builder.Services.AddCors(options =>
