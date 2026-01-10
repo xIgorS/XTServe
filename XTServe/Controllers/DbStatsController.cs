@@ -6,7 +6,7 @@ namespace XTServe.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
+[Authorize(Policy = "AuthorizedUsersOnly")]
 public class DbStatsController : ControllerBase
 {
     private readonly IConfiguration _configuration;
