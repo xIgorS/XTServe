@@ -1,0 +1,80 @@
+@page "/dbstats"
+@using XTWeb.Models
+@using XTWeb.Services
+@inject IDbStatsService DbStatsService
+@rendermode InteractiveServer
+
+<PageTitle>DB Statistics</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Database Statistics</MudText>
+
+@if (isLoading)
+{
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    <MudText Typo="Typo.body1">Loading database statistics...</MudText>
+}
+else if (dbStats == null || !dbStats.Any())
+{
+    <MudAlert Severity="Severity.Warning">No database statistics available.</MudAlert>
+}
+else
+{
+    <MudDataGrid T="DbStat" Items="@dbStats" Filterable="true" SortMode="SortMode.Multiple" 
+                 Groupable="true" Dense="true" Hover="true" Bordered="true" Striped="true">
+        <Columns>
+            <PropertyColumn Property="x => x.DatabaseName" Title="Database Name" />
+            <PropertyColumn Property="x => x.LogicalFileName" Title="Logical File Name" />
+            <PropertyColumn Property="x => x.FileGroup" Title="File Group" />
+            <PropertyColumn Property="x => x.PhysicalFileName" Title="Physical File Name" />
+            <PropertyColumn Property="x => x.FileType" Title="File Type" />
+            <PropertyColumn Property="x => x.AllocatedSpaceMB" Title="Allocated Space (MB)" Format="N2" />
+            <PropertyColumn Property="x => x.UsedSpaceMB" Title="Used Space (MB)" Format="N2" />
+            <PropertyColumn Property="x => x.FreeSpaceMB" Title="Free Space (MB)" Format="N2" />
+            <PropertyColumn Property="x => x.UsedPercent" Title="Used %" Format="N2" />
+        </Columns>
+    </MudDataGrid>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <MudAlert Severity="Severity.Error" Class="mt-4">@errorMessage</MudAlert>
+}
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-4" OnClick="LoadDataAsync">
+    Refresh Data
+</MudButton>
+
+@code {
+    private List<DbStat>? dbStats;
+    private bool isLoading = true;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDataAsync();
+    }
+
+    private async Task LoadDataAsync()
+    {
+        isLoading = true;
+        errorMessage = null;
+        
+        try
+        {
+            dbStats = await DbStatsService.GetDbStatsAsync();
+            
+            if (dbStats == null || !dbStats.Any())
+            {
+                errorMessage = "No data returned from the API.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading data: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}
