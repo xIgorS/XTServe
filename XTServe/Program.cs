@@ -17,14 +17,15 @@ builder.Services.AddAuthorization(options =>
         }));
 });
 
-// Configure CORS policy for all origins
+// Configure CORS policy for XTWeb
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    options.AddPolicy("AllowXTWeb", policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins("https://localhost:59336", "http://localhost:59337")
               .AllowAnyMethod()
-              .AllowAnyHeader();
+              .AllowAnyHeader()
+              .AllowCredentials();
     });
 });
 
@@ -40,7 +41,7 @@ if (app.Environment.IsDevelopment())
 }
 
 // Enable CORS
-app.UseCors("AllowAll");
+app.UseCors("AllowXTWeb");
 
 // Enable authentication and authorization
 app.UseAuthentication();

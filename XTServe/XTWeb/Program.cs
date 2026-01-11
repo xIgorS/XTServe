@@ -25,11 +25,20 @@ builder.Services.AddAuthorization(options =>
         }));
 });
 
-// Configure HttpClient for API calls
+// Configure HttpClient for API calls with Windows Authentication
 builder.Services.AddHttpClient("XTServeAPI", client =>
 {
     var apiUrl = builder.Configuration["ApiSettings:BaseUrl"] ?? "https://localhost:7001";
     client.BaseAddress = new Uri(apiUrl);
+    client.Timeout = TimeSpan.FromSeconds(30);
+})
+.ConfigurePrimaryHttpMessageHandler(() =>
+{
+    return new HttpClientHandler
+    {
+        UseDefaultCredentials = true,
+        ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+    };
 });
 
 // Register services
