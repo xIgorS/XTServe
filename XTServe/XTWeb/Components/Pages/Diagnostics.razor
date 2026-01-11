@@ -6,23 +6,23 @@
 
 <PageTitle>API Diagnostics</PageTitle>
 
-<MudText Typo="Typo.h3" GutterBottom="true">API Connection Diagnostics</MudText>
+<FluentLabel Typo="Typography.H3" Style="margin-bottom: 16px;">API Connection Diagnostics</FluentLabel>
 
-<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="TestApiConnection" Disabled="@isTesting">
+<FluentButton Appearance="Appearance.Accent" OnClick="TestApiConnection" Disabled="@isTesting">
     Test API Connection
-</MudButton>
+</FluentButton>
 
 @if (isTesting)
 {
-    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-4" />
+    <FluentProgressRing Style="margin: 16px 0;" />
 }
 
 @if (!string.IsNullOrEmpty(testResult))
 {
-    <MudPaper Class="pa-4 mt-4">
-        <MudText Typo="Typo.h6">Test Results:</MudText>
-        <pre style="white-space: pre-wrap; word-wrap: break-word;">@testResult</pre>
-    </MudPaper>
+    <FluentCard Style="margin-top: 16px; padding: 16px;">
+        <FluentLabel Typo="Typography.H6">Test Results:</FluentLabel>
+        <pre style="white-space: pre-wrap; word-wrap: break-word; margin-top: 8px;">@testResult</pre>
+    </FluentCard>
 }
 
 @code {

@@ -1,6 +1,6 @@
 using XTWeb.Components;
-using MudBlazor.Services;
 using XTWeb.Services;
+using Microsoft.FluentUI.AspNetCore.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,8 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-// Add MudBlazor services
-builder.Services.AddMudServices();
+// Add Fluent UI services
+builder.Services.AddFluentUIComponents();
 
 // Configure Windows Authentication
 builder.Services.AddAuthentication(Microsoft.AspNetCore.Authentication.Negotiate.NegotiateDefaults.AuthenticationScheme)

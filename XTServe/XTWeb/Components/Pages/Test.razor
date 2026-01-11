@@ -3,42 +3,45 @@
 
 <PageTitle>Test Page</PageTitle>
 
-<MudText Typo="Typo.h3">Test Page</MudText>
+<FluentLabel Typo="Typography.H3">Test Page</FluentLabel>
 
-<MudPaper Class="pa-4 my-4">
-    <MudText>Counter: @counter</MudText>
-    <MudText>Has rendered: @hasRendered</MudText>
-    <MudText>Data loaded: @dataLoaded</MudText>
-    <MudText>Time: @currentTime</MudText>
-</MudPaper>
+<FluentCard Style="margin: 16px 0;">
+    <FluentStack Orientation="Orientation.Vertical">
+        <FluentLabel>Counter: @counter</FluentLabel>
+        <FluentLabel>Has rendered: @hasRendered</FluentLabel>
+        <FluentLabel>Data loaded: @dataLoaded</FluentLabel>
+        <FluentLabel>Time: @currentTime</FluentLabel>
+    </FluentStack>
+</FluentCard>
 
 @if (isLoading)
 {
-    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
-    <MudText>Loading...</MudText>
+    <FluentProgressRing />
+    <FluentLabel>Loading...</FluentLabel>
 }
 else
 {
-    <MudText Color="Color.Success">Loading complete!</MudText>
+    <FluentMessageBar Intent="MessageIntent.Success">Loading complete!</FluentMessageBar>
     
     @if (testData != null)
     {
-        <MudPaper Class="pa-4">
+        <FluentCard Style="margin: 16px 0;">
             @foreach (var item in testData)
             {
-                <MudText>• @item</MudText>
+                <FluentLabel>• @item</FluentLabel>
             }
-        </MudPaper>
+        </FluentCard>
     }
 }
 
-<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="IncrementCounter">
-    Increment Counter
-</MudButton>
-
-<MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="LoadTestData" Class="ml-2">
-    Load Test Data
-</MudButton>
+<FluentStack Orientation="Orientation.Horizontal">
+    <FluentButton Appearance="Appearance.Accent" OnClick="IncrementCounter">
+        Increment Counter
+    </FluentButton>
+    <FluentButton Appearance="Appearance.Neutral" OnClick="LoadTestData">
+        Load Test Data
+    </FluentButton>
+</FluentStack>
 
 @code {
     private int counter = 0;

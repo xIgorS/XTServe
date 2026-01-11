@@ -4,72 +4,72 @@
 
 <PageTitle>Circuit Recovery</PageTitle>
 
-<div style="max-width: 800px; margin: 50px auto; padding: 20px;">
-    <div style="background: #e3f2fd; padding: 20px; border-left: 4px solid #2196f3; margin-bottom: 20px;">
-        <h2 style="color: #1565c0;">?? Blazor Circuit Recovery</h2>
-        <p>If you experienced a page crash or "all pages stopped working", you're on the recovery page.</p>
-    </div>
+<FluentStack Orientation="Orientation.Vertical" Style="max-width: 800px; margin: 50px auto; padding: 20px;">
+    <FluentMessageBar Intent="MessageIntent.Info" Style="margin-bottom: 20px;">
+        <FluentLabel Typo="Typography.H6">?? Blazor Circuit Recovery</FluentLabel>
+        <FluentLabel>If you experienced a page crash or "all pages stopped working", you're on the recovery page.</FluentLabel>
+    </FluentMessageBar>
 
-    <div style="background: #fff3e0; padding: 15px; border-left: 4px solid #ff9800; margin-bottom: 20px;">
-        <h3 style="color: #e65100;">What Happened?</h3>
-        <p>The Blazor SignalR circuit crashed due to an unhandled exception. This typically happens when:</p>
-        <ul>
+    <FluentMessageBar Intent="MessageIntent.Warning" Style="margin-bottom: 20px;">
+        <FluentLabel Typo="Typography.H6">What Happened?</FluentLabel>
+        <FluentLabel>The Blazor SignalR circuit crashed due to an unhandled exception. This typically happens when:</FluentLabel>
+        <ul style="margin: 10px 0;">
             <li>The API is not accessible (XTServe not running)</li>
             <li>A component throws an unhandled exception</li>
             <li>Network connection was interrupted</li>
             <li>A timeout occurred during data loading</li>
         </ul>
-    </div>
+    </FluentMessageBar>
 
-    <div style="background: #e8f5e9; padding: 15px; border-left: 4px solid #4caf50; margin-bottom: 20px;">
-        <h3 style="color: #2e7d32;">? Circuit Has Been Fixed</h3>
-        <p>The following changes have been made to prevent future crashes:</p>
-        <ul>
+    <FluentMessageBar Intent="MessageIntent.Success" Style="margin-bottom: 20px;">
+        <FluentLabel Typo="Typography.H6">? Circuit Has Been Fixed</FluentLabel>
+        <FluentLabel>The following changes have been made to prevent future crashes:</FluentLabel>
+        <ul style="margin: 10px 0;">
             <li>Added global ErrorBoundary to catch unhandled exceptions</li>
             <li>Fixed async lifecycle methods to prevent circuit crashes</li>
             <li>Added comprehensive error handling in data loading</li>
             <li>Improved logging for better diagnostics</li>
         </ul>
-    </div>
+    </FluentMessageBar>
 
-    <div style="background: #f5f5f5; padding: 20px; border-radius: 4px; margin-bottom: 20px;">
-        <h3>?? Quick Diagnostics</h3>
+    <FluentCard Style="margin-bottom: 20px; padding: 20px;">
+        <FluentLabel Typo="Typography.H5">?? Quick Diagnostics</FluentLabel>
         
-        <div style="margin: 20px 0;">
-            <h4>Step 1: Check XTServe Status</h4>
-            <p>XTServe API must be running on port 7001</p>
-            <button @onclick="TestApiDirectly" style="background: #2196f3; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
+        <FluentStack Orientation="Orientation.Vertical" Style="margin: 20px 0;">
+            <FluentLabel Typo="Typography.H6">Step 1: Check XTServe Status</FluentLabel>
+            <FluentLabel>XTServe API must be running on port 7001</FluentLabel>
+            <FluentButton Appearance="Appearance.Accent" OnClick="TestApiDirectly">
                 Test XTServe Connection
-            </button>
-        </div>
+            </FluentButton>
+        </FluentStack>
 
         @if (!string.IsNullOrEmpty(apiTestResult))
         {
-            <div style="background: white; padding: 15px; border: 1px solid #ddd; margin: 10px 0;">
+            <FluentCard Style="margin: 10px 0; padding: 15px;">
                 <pre style="margin: 0; white-space: pre-wrap;">@apiTestResult</pre>
-            </div>
+            </FluentCard>
         }
 
-        <div style="margin: 20px 0;">
-            <h4>Step 2: Try Simple Test</h4>
-            <p>Verify basic Blazor functionality works</p>
-            <button @onclick='() => Navigation.NavigateTo("/test")' style="background: #4caf50; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
+        <FluentStack Orientation="Orientation.Vertical" Style="margin: 20px 0;">
+            <FluentLabel Typo="Typography.H6">Step 2: Try Simple Test</FluentLabel>
+            <FluentLabel>Verify basic Blazor functionality works</FluentLabel>
+            <FluentButton Appearance="Appearance.Neutral" OnClick='() => Navigation.NavigateTo("/test")'>
                 Go to Test Page
-            </button>
-        </div>
+            </FluentButton>
+        </FluentStack>
 
-        <div style="margin: 20px 0;">
-            <h4>Step 3: Try DB Stats (Simple)</h4>
-            <p>Test data loading without MudBlazor components</p>
-            <button @onclick='() => Navigation.NavigateTo("/dbstats-simple")' style="background: #ff9800; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
+        <FluentStack Orientation="Orientation.Vertical" Style="margin: 20px 0;">
+            <FluentLabel Typo="Typography.H6">Step 3: Try DB Stats (Simple)</FluentLabel>
+            <FluentLabel>Test data loading without complex components</FluentLabel>
+            <FluentButton Appearance="Appearance.Neutral" OnClick='() => Navigation.NavigateTo("/dbstats-simple")'>
                 Go to Simple DB Stats
-            </button>
-        </div>
-    </div>
+            </FluentButton>
+        </FluentStack>
+    </FluentCard>
 
-    <div style="margin-top: 30px; padding: 20px; background: white; border: 1px solid #ddd; border-radius: 4px;">
-        <h3>?? Next Steps</h3>
-        <ol>
+    <FluentCard Style="margin-top: 30px; padding: 20px;">
+        <FluentLabel Typo="Typography.H5">?? Next Steps</FluentLabel>
+        <ol style="margin: 10px 0;">
             <li><strong>Ensure XTServe is running:</strong>
                 <pre style="background: #f5f5f5; padding: 10px; margin: 10px 0;">dotnet run --project C:\Repos\XTServe\XTServe\XTServe.csproj</pre>
             </li>
@@ -83,14 +83,14 @@
                 </ul>
             </li>
         </ol>
-    </div>
+    </FluentCard>
 
-    <div style="margin-top: 20px; text-align: center;">
-        <button @onclick='() => Navigation.NavigateTo("/")' style="background: #1976d2; color: white; padding: 15px 30px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold;">
+    <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center" Style="margin-top: 20px;">
+        <FluentButton Appearance="Appearance.Accent" OnClick='() => Navigation.NavigateTo("/")'>
             ?? Return to Home
-        </button>
-    </div>
-</div>
+        </FluentButton>
+    </FluentStack>
+</FluentStack>
 
 @code {
     private string? apiTestResult;

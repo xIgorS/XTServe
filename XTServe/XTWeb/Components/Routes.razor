@@ -1,7 +1,6 @@
-﻿<MudThemeProvider />
-<MudPopoverProvider />
-<MudDialogProvider />
-<MudSnackbarProvider />
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Icons
+
+<FluentDesignTheme StorageName="theme" />
 
 <CascadingAuthenticationState>
     <Router AppAssembly="typeof(Program).Assembly" NotFoundPage="typeof(Pages.NotFound)">
@@ -12,20 +11,40 @@
                     <FocusOnNavigate RouteData="routeData" Selector="h1" />
                 </ChildContent>
                 <ErrorContent Context="exception">
-                    <div style="background: #ffebee; padding: 20px; margin: 20px; border-left: 4px solid #f44336;">
-                        <h3 style="color: #c62828;">❌ An error occurred</h3>
-                        <p><strong>Error:</strong> @exception.Message</p>
-                        <details style="margin-top: 10px;">
-                            <summary style="cursor: pointer;">Show details</summary>
-                            <pre style="background: #fff; padding: 10px; overflow: auto; margin-top: 10px;">@exception.ToString()</pre>
-                        </details>
-                        <div style="margin-top: 20px;">
-                            <a href="/" style="background: #1976d2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">Go to Home</a>
-                            <button onclick="location.reload()" style="background: #388e3c; color: white; padding: 10px 20px; border: none; border-radius: 4px; margin-left: 10px; cursor: pointer;">Reload Page</button>
-                        </div>
-                    </div>
+                    <FluentStack Orientation="Orientation.Vertical" Style="padding: 20px; margin: 20px;">
+                        <FluentMessageBar Intent="MessageIntent.Error" Title="An error occurred">
+                            <strong>Error:</strong> @exception.Message
+                        </FluentMessageBar>
+                        <FluentAccordion>
+                            <FluentAccordionItem Heading="Show details">
+                                <pre style="background: #fff; padding: 10px; overflow: auto; margin-top: 10px;">@exception.ToString()</pre>
+                            </FluentAccordionItem>
+                        </FluentAccordion>
+                        <FluentStack Orientation="Orientation.Horizontal" Style="margin-top: 20px;">
+                            <FluentButton Appearance="Appearance.Accent" OnClick="@NavigateToHome">
+                                🏠 Go to Home
+                            </FluentButton>
+                            <FluentButton Appearance="Appearance.Neutral" OnClick="@ReloadPage">
+                                🔄 Reload Page
+                            </FluentButton>
+                        </FluentStack>
+                    </FluentStack>
                 </ErrorContent>
             </ErrorBoundary>
         </Found>
     </Router>
 </CascadingAuthenticationState>
+
+@code {
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+
+    private void NavigateToHome()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+    private void ReloadPage()
+    {
+        Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
+    }
+}

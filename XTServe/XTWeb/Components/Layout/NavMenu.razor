@@ -1,8 +1,20 @@
-﻿<MudNavMenu>
-    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
-    <MudNavLink Href="/dbstats" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Storage">DB Statistics</MudNavLink>
-    <MudNavLink Href="/dbstats-simple" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.TableChart">DB Stats (Simple)</MudNavLink>
-    <MudNavLink Href="/diagnostics" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.BugReport">Diagnostics</MudNavLink>
-    <MudNavLink Href="/test" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Science">Test Page</MudNavLink>
-    <MudNavLink Href="/recover" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.RestartAlt">Recovery</MudNavLink>
-</MudNavMenu>
+﻿<FluentStack Orientation="Orientation.Vertical" Style="padding: 8px;">
+    <FluentNavLink Href="/" Match="NavLinkMatch.All" Style="padding: 12px 16px; margin: 4px 0; border-radius: 4px;">
+        🏠 Home
+    </FluentNavLink>
+    <FluentNavLink Href="/dbstats" Match="NavLinkMatch.Prefix" Style="padding: 12px 16px; margin: 4px 0; border-radius: 4px;">
+        📊 DB Statistics
+    </FluentNavLink>
+    <FluentNavLink Href="/dbstats-simple" Match="NavLinkMatch.Prefix" Style="padding: 12px 16px; margin: 4px 0; border-radius: 4px;">
+        📋 DB Stats (Simple)
+    </FluentNavLink>
+    <FluentNavLink Href="/diagnostics" Match="NavLinkMatch.Prefix" Style="padding: 12px 16px; margin: 4px 0; border-radius: 4px;">
+        🔍 Diagnostics
+    </FluentNavLink>
+    <FluentNavLink Href="/test" Match="NavLinkMatch.Prefix" Style="padding: 12px 16px; margin: 4px 0; border-radius: 4px;">
+        🧪 Test Page
+    </FluentNavLink>
+    <FluentNavLink Href="/recover" Match="NavLinkMatch.Prefix" Style="padding: 12px 16px; margin: 4px 0; border-radius: 4px;">
+        🔄 Recovery
+    </FluentNavLink>
+</FluentStack>
