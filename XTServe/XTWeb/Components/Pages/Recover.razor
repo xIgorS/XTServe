@@ -1,0 +1,134 @@
+@page "/recover"
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>Circuit Recovery</PageTitle>
+
+<div style="max-width: 800px; margin: 50px auto; padding: 20px;">
+    <div style="background: #e3f2fd; padding: 20px; border-left: 4px solid #2196f3; margin-bottom: 20px;">
+        <h2 style="color: #1565c0;">?? Blazor Circuit Recovery</h2>
+        <p>If you experienced a page crash or "all pages stopped working", you're on the recovery page.</p>
+    </div>
+
+    <div style="background: #fff3e0; padding: 15px; border-left: 4px solid #ff9800; margin-bottom: 20px;">
+        <h3 style="color: #e65100;">What Happened?</h3>
+        <p>The Blazor SignalR circuit crashed due to an unhandled exception. This typically happens when:</p>
+        <ul>
+            <li>The API is not accessible (XTServe not running)</li>
+            <li>A component throws an unhandled exception</li>
+            <li>Network connection was interrupted</li>
+            <li>A timeout occurred during data loading</li>
+        </ul>
+    </div>
+
+    <div style="background: #e8f5e9; padding: 15px; border-left: 4px solid #4caf50; margin-bottom: 20px;">
+        <h3 style="color: #2e7d32;">? Circuit Has Been Fixed</h3>
+        <p>The following changes have been made to prevent future crashes:</p>
+        <ul>
+            <li>Added global ErrorBoundary to catch unhandled exceptions</li>
+            <li>Fixed async lifecycle methods to prevent circuit crashes</li>
+            <li>Added comprehensive error handling in data loading</li>
+            <li>Improved logging for better diagnostics</li>
+        </ul>
+    </div>
+
+    <div style="background: #f5f5f5; padding: 20px; border-radius: 4px; margin-bottom: 20px;">
+        <h3>?? Quick Diagnostics</h3>
+        
+        <div style="margin: 20px 0;">
+            <h4>Step 1: Check XTServe Status</h4>
+            <p>XTServe API must be running on port 7001</p>
+            <button @onclick="TestApiDirectly" style="background: #2196f3; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
+                Test XTServe Connection
+            </button>
+        </div>
+
+        @if (!string.IsNullOrEmpty(apiTestResult))
+        {
+            <div style="background: white; padding: 15px; border: 1px solid #ddd; margin: 10px 0;">
+                <pre style="margin: 0; white-space: pre-wrap;">@apiTestResult</pre>
+            </div>
+        }
+
+        <div style="margin: 20px 0;">
+            <h4>Step 2: Try Simple Test</h4>
+            <p>Verify basic Blazor functionality works</p>
+            <button @onclick='() => Navigation.NavigateTo("/test")' style="background: #4caf50; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
+                Go to Test Page
+            </button>
+        </div>
+
+        <div style="margin: 20px 0;">
+            <h4>Step 3: Try DB Stats (Simple)</h4>
+            <p>Test data loading without MudBlazor components</p>
+            <button @onclick='() => Navigation.NavigateTo("/dbstats-simple")' style="background: #ff9800; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
+                Go to Simple DB Stats
+            </button>
+        </div>
+    </div>
+
+    <div style="margin-top: 30px; padding: 20px; background: white; border: 1px solid #ddd; border-radius: 4px;">
+        <h3>?? Next Steps</h3>
+        <ol>
+            <li><strong>Ensure XTServe is running:</strong>
+                <pre style="background: #f5f5f5; padding: 10px; margin: 10px 0;">dotnet run --project C:\Repos\XTServe\XTServe\XTServe.csproj</pre>
+            </li>
+            <li><strong>Reload this application:</strong> Press F5 or Ctrl+R</li>
+            <li><strong>Try diagnostic pages in order:</strong>
+                <ul>
+                    <li>/test - Basic functionality</li>
+                    <li>/diagnostics - API connection test</li>
+                    <li>/dbstats-simple - Data loading test</li>
+                    <li>/dbstats - Full page</li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+
+    <div style="margin-top: 20px; text-align: center;">
+        <button @onclick='() => Navigation.NavigateTo("/")' style="background: #1976d2; color: white; padding: 15px 30px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold;">
+            ?? Return to Home
+        </button>
+    </div>
+</div>
+
+@code {
+    private string? apiTestResult;
+
+    private async Task TestApiDirectly()
+    {
+        apiTestResult = "Testing...";
+        StateHasChanged();
+        
+        try
+        {
+            using var client = new HttpClient(new HttpClientHandler
+            {
+                UseDefaultCredentials = true,
+                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            });
+            
+            var response = await client.GetAsync("https://localhost:7001/api/DbStats");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                apiTestResult = $"? SUCCESS\nStatus: {response.StatusCode}\nContent Length: {content.Length} chars\n\nXTServe is accessible!";
+            }
+            else
+            {
+                apiTestResult = $"? FAILED\nStatus: {response.StatusCode}\n\nXTServe responded but returned an error.";
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            apiTestResult = $"? CONNECTION FAILED\n\nUnable to reach XTServe at https://localhost:7001\n\nError: {ex.Message}\n\nMake sure XTServe is running!";
+        }
+        catch (Exception ex)
+        {
+            apiTestResult = $"? ERROR\n\n{ex.Message}";
+        }
+        
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,92 @@
+@page "/test"
+@rendermode InteractiveServer
+
+<PageTitle>Test Page</PageTitle>
+
+<MudText Typo="Typo.h3">Test Page</MudText>
+
+<MudPaper Class="pa-4 my-4">
+    <MudText>Counter: @counter</MudText>
+    <MudText>Has rendered: @hasRendered</MudText>
+    <MudText>Data loaded: @dataLoaded</MudText>
+    <MudText>Time: @currentTime</MudText>
+</MudPaper>
+
+@if (isLoading)
+{
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    <MudText>Loading...</MudText>
+}
+else
+{
+    <MudText Color="Color.Success">Loading complete!</MudText>
+    
+    @if (testData != null)
+    {
+        <MudPaper Class="pa-4">
+            @foreach (var item in testData)
+            {
+                <MudText>• @item</MudText>
+            }
+        </MudPaper>
+    }
+}
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="IncrementCounter">
+    Increment Counter
+</MudButton>
+
+<MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="LoadTestData" Class="ml-2">
+    Load Test Data
+</MudButton>
+
+@code {
+    private int counter = 0;
+    private bool hasRendered = false;
+    private bool dataLoaded = false;
+    private bool isLoading = false;
+    private string currentTime = DateTime.Now.ToString("HH:mm:ss");
+    private List<string>? testData;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            hasRendered = true;
+            currentTime = DateTime.Now.ToString("HH:mm:ss");
+            await InvokeAsync(StateHasChanged);
+            
+            // Auto-load data after first render
+            await LoadTestData();
+        }
+    }
+
+    private void IncrementCounter()
+    {
+        counter++;
+        currentTime = DateTime.Now.ToString("HH:mm:ss");
+    }
+
+    private async Task LoadTestData()
+    {
+        isLoading = true;
+        await InvokeAsync(StateHasChanged);
+        
+        // Simulate API call
+        await Task.Delay(1000);
+        
+        testData = new List<string>
+        {
+            "Item 1",
+            "Item 2",
+            "Item 3",
+            "Item 4",
+            "Item 5"
+        };
+        
+        dataLoaded = true;
+        isLoading = false;
+        currentTime = DateTime.Now.ToString("HH:mm:ss");
+        await InvokeAsync(StateHasChanged);
+    }
+}

@@ -20,6 +20,11 @@ This document describes the configuration to connect XTWeb (Blazor) to XTServe (
   - Uses default Windows credentials (`UseDefaultCredentials = true`)
   - Accepts self-signed certificates for development
 
+### 3. DbStats Page Fix
+- **Issue**: Page was flickering on first load (showing data then returning to loading state)
+- **Root Cause**: Interactive Server render mode causes component initialization twice (prerender + interactive)
+- **Solution**: Moved data loading to `OnAfterRenderAsync` with `firstRender` check to ensure data loads only once after SignalR connection is established
+
 ## How to Run Both Projects
 
 ### Option 1: Visual Studio Multiple Startup Projects
@@ -88,6 +93,21 @@ This document describes the configuration to connect XTWeb (Blazor) to XTServe (
 3. Verify connection string in XTServe `appsettings.json`
 4. Check that SQL Server is accessible and the `dbo.GetDBStats` stored procedure exists
 
+### Issue: "Page flickers on first load" ? FIXED
+**Previous Problem:**
+- DbStats page would display data briefly then return to loading state on first navigation
+
+**Root Cause:**
+- Blazor Server's interactive render mode with prerendering causes components to initialize twice:
+  1. During static prerender phase (server-side)
+  2. During interactive phase (after SignalR connection)
+
+**Solution Applied:**
+- Disabled prerendering for the DbStats page: `@rendermode @(new InteractiveServerRenderMode(prerender: false))`
+- Data now loads only once via `OnInitializedAsync()` after the interactive connection is established
+- Removed complex lifecycle workarounds - simple and clean solution
+- Added `StateHasChanged()` calls to ensure UI updates properly
+
 ## Testing the Connection
 
 1. **Test API Directly**: Open browser to `https://localhost:7001/api/DbStats`
@@ -95,7 +115,8 @@ This document describes the configuration to connect XTWeb (Blazor) to XTServe (
    - Should return JSON data with database statistics
 
 2. **Test from XTWeb**: Navigate to `https://localhost:59336/dbstats`
-   - Should display data grid with database statistics
+   - Should display loading indicator briefly
+   - Then display data grid with database statistics (no flickering)
    - Check browser console (F12) for any JavaScript errors
    - Check XTWeb application logs for detailed error messages
 
@@ -105,6 +126,19 @@ This document describes the configuration to connect XTWeb (Blazor) to XTServe (
 - Self-signed certificates are accepted in development mode
 - Windows Authentication requires running on Windows with domain/local accounts
 - The API expects a SQL Server database with the `dbo.GetDBStats` stored procedure
+
+## Blazor Server Render Modes
+
+The DbStats page uses `@rendermode InteractiveServer` which:
+- Enables real-time interactivity via SignalR
+- Prerenders content for faster initial page load
+- Requires special handling for component lifecycle to avoid double initialization
+
+**Best Practices:**
+- For pages with data loading, consider disabling prerendering: `@rendermode @(new InteractiveServerRenderMode(prerender: false))`
+- Use `OnInitializedAsync()` for data loading when prerendering is disabled
+- Call `StateHasChanged()` explicitly when updating state from async operations
+- Only use `OnAfterRenderAsync(bool firstRender)` if you need prerendering and want to avoid double initialization
 
 ## Security Notes
 

@@ -30,7 +30,7 @@ builder.Services.AddHttpClient("XTServeAPI", client =>
 {
     var apiUrl = builder.Configuration["ApiSettings:BaseUrl"] ?? "https://localhost:7001";
     client.BaseAddress = new Uri(apiUrl);
-    client.Timeout = TimeSpan.FromSeconds(30);
+    client.Timeout = TimeSpan.FromSeconds(10); // Reduced timeout for faster feedback
 })
 .ConfigurePrimaryHttpMessageHandler(() =>
 {

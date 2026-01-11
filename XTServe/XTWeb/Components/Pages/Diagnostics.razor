@@ -1,0 +1,123 @@
+@page "/diagnostics"
+@using System.Net.Http
+@inject IHttpClientFactory HttpClientFactory
+@inject IConfiguration Configuration
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
+<PageTitle>API Diagnostics</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">API Connection Diagnostics</MudText>
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="TestApiConnection" Disabled="@isTesting">
+    Test API Connection
+</MudButton>
+
+@if (isTesting)
+{
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-4" />
+}
+
+@if (!string.IsNullOrEmpty(testResult))
+{
+    <MudPaper Class="pa-4 mt-4">
+        <MudText Typo="Typo.h6">Test Results:</MudText>
+        <pre style="white-space: pre-wrap; word-wrap: break-word;">@testResult</pre>
+    </MudPaper>
+}
+
+@code {
+    private bool isTesting = false;
+    private string? testResult;
+
+    private async Task TestApiConnection()
+    {
+        isTesting = true;
+        testResult = "";
+        StateHasChanged();
+
+        var results = new System.Text.StringBuilder();
+        results.AppendLine($"[{DateTime.Now:HH:mm:ss}] Starting API diagnostics...\n");
+
+        try
+        {
+            // Test 1: Configuration
+            var apiUrl = Configuration["ApiSettings:BaseUrl"] ?? "https://localhost:7001";
+            results.AppendLine($"? API Base URL from config: {apiUrl}");
+
+            // Test 2: Create HttpClient
+            var client = HttpClientFactory.CreateClient("XTServeAPI");
+            results.AppendLine($"? HttpClient created successfully");
+            results.AppendLine($"  Base Address: {client.BaseAddress}");
+            results.AppendLine($"  Timeout: {client.Timeout.TotalSeconds}s\n");
+
+            // Test 3: Test connection
+            results.AppendLine($"[{DateTime.Now:HH:mm:ss}] Attempting to connect to API...");
+            
+            var response = await client.GetAsync("api/DbStats");
+            
+            results.AppendLine($"[{DateTime.Now:HH:mm:ss}] Response received!");
+            results.AppendLine($"  Status Code: {(int)response.StatusCode} ({response.StatusCode})");
+            results.AppendLine($"  Success: {response.IsSuccessStatusCode}");
+            
+            // Test 4: Read response
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                results.AppendLine($"\n? Content received ({content.Length} characters)");
+                
+                if (content.Length > 0)
+                {
+                    results.AppendLine($"\nFirst 500 characters of response:");
+                    results.AppendLine(content.Substring(0, Math.Min(500, content.Length)));
+                    
+                    if (content.Length > 500)
+                    {
+                        results.AppendLine("...(truncated)");
+                    }
+                }
+                
+                results.AppendLine("\n??? API CONNECTION SUCCESSFUL ???");
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                results.AppendLine($"\n? Request failed with status: {response.StatusCode}");
+                results.AppendLine($"  Error content: {errorContent}");
+                results.AppendLine("\n??? API CONNECTION FAILED ???");
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            results.AppendLine($"\n? HTTP Request Exception:");
+            results.AppendLine($"  Message: {ex.Message}");
+            results.AppendLine($"  Inner Exception: {ex.InnerException?.Message}");
+            results.AppendLine("\n??? UNABLE TO CONNECT TO API ???");
+            results.AppendLine("\nPossible causes:");
+            results.AppendLine("  - XTServe is not running");
+            results.AppendLine("  - XTServe is running on a different port");
+            results.AppendLine("  - Firewall is blocking the connection");
+            results.AppendLine("  - SSL certificate issue");
+        }
+        catch (TaskCanceledException ex)
+        {
+            results.AppendLine($"\n? Request Timeout:");
+            results.AppendLine($"  Message: {ex.Message}");
+            results.AppendLine("\n??? REQUEST TIMED OUT ???");
+            results.AppendLine("\nThe API did not respond within the timeout period.");
+        }
+        catch (Exception ex)
+        {
+            results.AppendLine($"\n? Unexpected Exception:");
+            results.AppendLine($"  Type: {ex.GetType().Name}");
+            results.AppendLine($"  Message: {ex.Message}");
+            results.AppendLine($"  Stack Trace: {ex.StackTrace}");
+        }
+        finally
+        {
+            results.AppendLine($"\n[{DateTime.Now:HH:mm:ss}] Diagnostics complete.");
+            testResult = results.ToString();
+            isTesting = false;
+            StateHasChanged();
+        }
+    }
+}
