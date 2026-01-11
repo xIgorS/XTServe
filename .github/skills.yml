@@ -1,0 +1,89 @@
+skills:
+  - name: xtserve-architecture
+    description: |
+      Provides context about the XTServe project architecture, including:
+      - .NET 10 Web API structure
+      - Windows Authentication (Negotiate/NTLM)
+      - CORS configuration
+      - SQL Server integration patterns
+      - Database statistics endpoint functionality
+    triggers:
+      - "project structure"
+      - "architecture"
+      - "how does this work"
+      - "explain the project"
+    context_files:
+      - "README.md"
+      - "XTServe/Program.cs"
+      - "XTServe/Controllers/*.cs"
+
+  - name: authentication-security
+    description: |
+      Helps with Windows Authentication and security configurations.
+      Provides guidance on:
+      - Windows Authentication setup
+      - User authorization policies
+      - Integrated Security in connection strings
+      - CORS policy configuration
+    triggers:
+      - "authentication"
+      - "security"
+      - "windows auth"
+      - "authorization"
+    context_files:
+      - "XTServe/Program.cs"
+      - "XTServe/appsettings.json"
+
+  - name: database-operations
+    description: |
+      Assists with SQL Server database operations and connection management.
+      Covers:
+      - Connection string configuration
+      - SqlClient usage patterns
+      - Database statistics queries
+      - Error handling for database operations
+    triggers:
+      - "database"
+      - "sql server"
+      - "connection string"
+      - "dbstats"
+    context_files:
+      - "XTServe/appsettings.json"
+      - "XTServe/Controllers/DbStatsController.cs"
+      - "README.md"
+
+  - name: api-endpoints
+    description: |
+      Provides information about available API endpoints and their usage.
+      Includes:
+      - Endpoint routes and HTTP methods
+      - Request/response models
+      - Authentication requirements
+      - CORS handling
+    triggers:
+      - "endpoint"
+      - "api"
+      - "controller"
+      - "route"
+    context_files:
+      - "XTServe/Controllers/*.cs"
+      - "README.md"
+      - "XTServe/XTServe.http"
+
+  - name: configuration
+    description: |
+      Helps with application configuration and settings management.
+      Covers:
+      - appsettings.json structure
+      - Connection strings
+      - Environment-specific configurations
+      - Development vs Production settings
+    triggers:
+      - "configuration"
+      - "settings"
+      - "appsettings"
+      - "environment"
+    context_files:
+      - "XTServe/appsettings.json"
+      - "XTServe/appsettings.Development.json"
+      - "README.md"
